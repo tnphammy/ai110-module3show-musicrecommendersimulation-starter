@@ -16,16 +16,29 @@ Replace this paragraph with your own summary of what your version does.
 ---
 
 ## How The System Works
+Real-world systems like Spotify look at your full listening history, what you skip, what you replay, and what people similar to you enjoy. Our version is much simpler — it scores every song against your profile using a few rules (genre, mood, energy, acousticness), then picks the top results. It always prioritises familiarity over surprise, and it can't learn or change over time. But it shows the core idea: turn what we know about a user and a song into a number, then rank.
 
 Explain your design in plain language.
 
 Some prompts to answer:
 
 - What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
+  - `genre` — the style of music (e.g. lofi, pop, rock)
+  - `mood` — the feeling of the song (e.g. chill, happy, intense)
+  - `energy` — how energetic the song is, from 0.0 (very calm) to 1.0 (very intense)
+  - `acousticness` — how acoustic vs. electronic the song sounds, from 0.0 to 1.0
 - What information does your `UserProfile` store
+  - `favorite_genre` — the genre the user prefers most
+  - `favorite_mood` — the mood the user usually listens to
+  - `target_energy` — the energy level the user tends to enjoy (0.0 to 1.0)
+  - `likes_acoustic` — whether the user prefers acoustic-sounding songs (true/false)
 - How does your `Recommender` compute a score for each song
+  - Tier 1: It prioritises the matching genre and mood equally. 
+  - Tier 2: It rewards a song energy close to what the user normally likes
+  - Tier 3: It revards a song depending on whether it matches the user's liking of acousticness
+  - Tier 4: It might add a small bonus if the valence is positive.
 - How do you choose which songs to recommend
+  
 
 You can include a simple diagram or bullet list if helpful.
 
