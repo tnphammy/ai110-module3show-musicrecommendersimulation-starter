@@ -18,10 +18,6 @@ Replace this paragraph with your own summary of what your version does.
 ## How The System Works
 Real-world systems like Spotify look at your full listening history, what you skip, what you replay, and what people similar to you enjoy. Our version is much simpler — it scores every song against your profile using a few rules (genre, mood, energy, acousticness), then picks the top results. It always prioritises familiarity over surprise, and it can't learn or change over time. But it shows the core idea: turn what we know about a user and a song into a number, then rank.
 
-Explain your design in plain language.
-
-Some prompts to answer:
-
 - What features does each `Song` use in your system
   - `genre` — the style of music (e.g. lofi, pop, rock)
   - `mood` — the feeling of the song (e.g. chill, happy, intense)
@@ -38,7 +34,12 @@ Some prompts to answer:
   - Tier 3: It revards a song depending on whether it matches the user's liking of acousticness
   - Tier 4: It might add a small bonus if the valence is positive.
 - How do you choose which songs to recommend
-  
+
+- Potential biases to be aware of
+  - Genre gets the highest weight (+3), so a perfect genre match can outrank a song that fits the user's mood, energy, and acousticness better overall
+  - Users with niche genres (e.g. r&b, amapiano) get fewer genre matches in the catalog, so the genre bonus fires less often — the system effectively works better for common genres like pop or lofi
+  - `likes_acoustic: false` only awards +1 vs. +2 for `true`, so acoustic-leaning users are rewarded more than non-acoustic ones
+  - The system has no memory — it will recommend the same top songs every time, with no way to say "I've already heard that"
 
 You can include a simple diagram or bullet list if helpful.
 

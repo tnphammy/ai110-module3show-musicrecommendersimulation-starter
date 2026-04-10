@@ -50,18 +50,85 @@ def load_songs(csv_path: str) -> List[Dict]:
     Loads songs from a CSV file.
     Required by src/main.py
     """
-    # TODO: Implement CSV loading logic
+    import csv
+
     print(f"Loading songs from {csv_path}...")
-    return []
+
+    # Step 1: Open the CSV file so Python can read it line by line
+    songs = []
+    with open(csv_path, newline="", encoding="utf-8") as f:
+
+        # Step 2: Use DictReader so each row becomes a dictionary
+        # where the keys are the column headers (id, title, genre, etc.)
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            # Step 3: Convert numeric fields from strings to numbers
+            # so we can do math on them later (e.g. subtract energy values)
+            row["id"]           = int(row["id"])
+            row["energy"]       = float(row["energy"])
+            row["tempo_bpm"]    = float(row["tempo_bpm"])
+            row["valence"]      = float(row["valence"])
+            row["danceability"] = float(row["danceability"])
+            row["acousticness"] = float(row["acousticness"])
+
+            # Step 4: Add the cleaned-up song dictionary to our list
+            songs.append(row)
+
+    # Step 5: Return the full list — each item is one song as a dictionary
+    return songs
 
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     """
     Scores a single song against user preferences.
     Required by recommend_songs() and src/main.py
     """
-    # TODO: Implement scoring logic using your Algorithm Recipe from Phase 2.
-    # Expected return format: (score, reasons)
-    return []
+    # Start with a blank slate — no points, no reasons yet
+    score = 0.0
+    reasons = []
+
+    # --- TIER 1: Genre match (+3) ---
+    # Genre is our strongest signal. If the song's genre matches what the user
+    # prefers, it gets the biggest bonus.
+    if song["genre"] == user_prefs["favorite_genre"]:
+        score += 3.0
+        reasons.append(f"genre match (+3.0)")
+
+    # --- TIER 2: Mood match (+2) ---
+    # Mood is the second most important signal. A song that fits the user's
+    # current vibe gets a solid bonus, just slightly below genre.
+    if song["mood"] == user_prefs["favorite_mood"]:
+        score += 2.0
+        reasons.append(f"mood match (+2.0)")
+
+    # --- TIER 3: Energy proximity (up to +2) ---
+    # Instead of a simple yes/no, we reward songs that are *close* in energy
+    # to what the user likes. A perfect match gives +2; a total mismatch gives +0.
+    energy_diff = abs(song["energy"] - user_prefs["target_energy"])
+    energy_score = round((1 - energy_diff) * 2, 2)
+    score += energy_score
+    reasons.append(f"energy proximity (+{energy_score})")
+
+    # --- TIER 4: Acousticness match (+2 or +1) ---
+    # We check whether the song's acoustic quality matches the user's preference.
+    # Acoustic lovers get a bigger reward (+2) than non-acoustic users (+1)
+    # because acousticness is a stronger differentiator in our catalog.
+    if user_prefs["likes_acoustic"] and song["acousticness"] > 0.6:
+        score += 2.0
+        reasons.append("acousticness match (+2.0)")
+    elif not user_prefs["likes_acoustic"] and song["acousticness"] < 0.4:
+        score += 1.0
+        reasons.append("low acousticness match (+1.0)")
+
+    # --- TIER 5: Valence bonus (optional, up to +0.5) ---
+    # A small bonus for songs with a positive, uplifting feel (valence > 0.7).
+    # This is a tiebreaker — it nudges scores slightly without dominating.
+    if song["valence"] > 0.7:
+        score += 0.5
+        reasons.append("positive valence (+0.5)")
+
+    # Return the final score and the list of reasons that explain it
+    return (score, reasons)
 
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
     """
