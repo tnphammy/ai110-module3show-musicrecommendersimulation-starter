@@ -87,12 +87,12 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     score = 0.0
     reasons = []
 
-    # --- TIER 1: Genre match (+3) ---
-    # Genre is our strongest signal. If the song's genre matches what the user
-    # prefers, it gets the biggest bonus.
+    # --- TIER 1: Genre match (+4) ---
+    # Genre is the most important signal — a genre match alone outweighs
+    # any other single feature.
     if song["genre"] == user_prefs["favorite_genre"]:
-        score += 3.0
-        reasons.append(f"genre match (+3.0)")
+        score += 4.0
+        reasons.append(f"genre match (+4.0)")
 
     # --- TIER 2: Mood match (+2) ---
     # Mood is the second most important signal. A song that fits the user's
@@ -102,8 +102,8 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
         reasons.append(f"mood match (+2.0)")
 
     # --- TIER 3: Energy proximity (up to +2) ---
-    # Instead of a simple yes/no, we reward songs that are *close* in energy
-    # to what the user likes. A perfect match gives +2; a total mismatch gives +0.
+    # Energy is the third priority — a perfect match gives +2, which is
+    # less than both genre and mood so it never overrides them.
     energy_diff = abs(song["energy"] - user_prefs["target_energy"])
     energy_score = round((1 - energy_diff) * 2, 2)
     score += energy_score
