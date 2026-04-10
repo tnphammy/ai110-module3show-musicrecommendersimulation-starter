@@ -46,7 +46,7 @@ You can include a simple diagram or bullet list if helpful.
 Demo:
 ![First Demo](./screenshots/rec_reasons.png)
 
-User 1 Demo:
+Four User Demo's (they get progressively harder):
 ![User 1 Demo](./screenshots/user-1.png)
 ![User 2 Demo](./screenshots/user-2.png)
 ![User 3 Demo](./screenshots/user-3.png)
