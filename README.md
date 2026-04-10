@@ -43,6 +43,8 @@ Real-world systems like Spotify look at your full listening history, what you sk
 
 You can include a simple diagram or bullet list if helpful.
 
+Demo:
+[!rec_reasons.png]
 ---
 
 ## Getting Started
